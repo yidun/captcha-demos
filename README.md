@@ -1,2 +1,9 @@
 # captcha-demos
-A collection of captcha sample codes in mainstream languages and frameworks
+
+验证码示例合集
+
+## 使用说明
+
+进入每个目录后请先阅读 `README.md`，查看示例使用说明。
+
+

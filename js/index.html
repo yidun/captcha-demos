@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>易盾验证码 - 原生 JS demo</title>
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <script src="./yidun-captcha.js"></script>
+    <div id="app">
+      <div id="captcha"></div>
+      <div class="login-form">
+        <h3>易盾验证码 - 原生 JS demo</h2>
+        <form class="form" action="">
+          <div class="input-block">
+            <label for="account" class="input-label">账号：</label>
+            <input
+              type="text"
+              name="account"
+              id="account"
+              placeholder="请输入账号"
+            />
+          </div>
+          <div class="input-block">
+            <label for="password" class="input-label">密码：</label>
+            <input
+              type="password"
+              name="password"
+              id="password"
+              placeholder="请输入密码"
+            />
+          </div>
+          <div class="input-block">
+            <label for="password" class="input-label">&nbsp;</label>
+            <div id="login-button">登录</div>
+          </div>
+        </form>
+        <div id="show-info"></div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        var captchaIns;
+        var validate;
+
+        initNECaptchaWithFallback({
+          element: '#captcha',
+          captchaId: '1274a03943d34e1f93a9f2c363c0a2b7',
+          width: '320px',
+          mode: 'popup',
+          apiVersion: 2,
+          onVerify: function (err, data) {
+            if (err) return // 当验证失败时，内部会自动refresh方法，无需手动再调用一次
+            // 若成功拿到 validate，传递给 登录 方法
+            submit(data.validate)
+          }
+        }, function onload(instance) {
+          captchaIns = instance
+        }, function onerror(err) {
+          console.warn(err)
+        })
+        
+        // 登录方法
+        function submit (validate) {
+          // 成功拿到 validate 后即可向服务端发起请求，做二次校验
+          const account = document.querySelector('#account').value
+          const password = document.querySelector('#password').value
+
+          document.querySelector('#show-info').innerHTML = `
+          已成功拿到参数：<br/>
+          {<br/>
+            account: ${account},<br/>
+            password: ${password},<br/>
+            validate: ${validate}<br/>
+          }<br/>
+          可以向后端发起请求了<br/>`
+        }
+
+        var loginBtn = document.querySelector('#login-button')
+        loginBtn.addEventListener('click', function () {
+          // 可在此做其它业务逻辑，比如表单校验
+          // if (validateFormFail) {
+          //   console.log('表单校验失败')
+          //   return
+          // }
+          captchaIns && captchaIns.verify()
+        })
+      })();
+    </script>
+  </body>
+</html>
