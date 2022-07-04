@@ -3,7 +3,7 @@
     <div id="captcha"></div>
     <div class="login-form">
       <h3>易盾验证码 - vue2 demo</h3>
-      <a-form :form="form" class="form"  :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }" @submit="handleSubmit">
+      <a-form :form="form" class="form"  :label-col="{ span: 5 }" :wrapper-col="{ span: 19 }" labelAlign="left" @submit="handleSubmit">
         <a-form-item label="账号">
           <a-input
             v-decorator="[

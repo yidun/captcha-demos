@@ -4,9 +4,9 @@
 
 ## 说明
 
-本项目是主流框架 vue2 的验证码调用示例，采用 `vue-cli@5.x` 生成的本地项目，并引入了 `ant-design-vue`，这也是目前市面上比较主流的项目生成方式了，当然，验证码的使用和你采用什么方式来生成 vue 项目没有关系。 
+本项目是主流框架 vue2 的验证码调用示例，采用 `vue-cli@5.x` 生成的本地项目，并引入了 `ant-design-vue@1.x`，这也是目前市面上比较主流的项目生成方式了，当然，验证码的使用和你采用什么方式来生成 vue 项目没有关系。 
 
-本地查看此示例需要以下三个步骤：
+本地查看此示例需要以下四个步骤：
 
 ### 1. captchaId 申请
 
@@ -46,6 +46,10 @@ npm run serve
 ###  eslint 报错 `no-undef`
 
 如果在你的项目中你使用了和本 demo 类似的使用 `initNECaptchaWithFallback` 方式，你的 eslint 可能会给你抛出一个错误 `no-undef`，因为我们是在 html 中引入的 js 脚本，并没有直接引入 `initNECaptchaWithFallback`，所以此变量是未定义的，所以必须针对此处禁用该规则。
+
+### 生产环境 `yidun-captcha.js` 请求不到
+
+因为此 demo 是本地服务直接引用 `public` 目录下的 `yidun-captcha.js`，在你打生产环境的包时，需要将该静态 js 文件复制到与 `index.html` 同一目录，webpack 有相关插件支持，或者你也可以将该文件放到你们的静态资源服务器，通过地址引入。
 
 ## 更多
 
