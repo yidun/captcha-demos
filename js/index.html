@@ -12,7 +12,7 @@
     <div id="app">
       <div id="captcha"></div>
       <div class="login-form">
-        <h3>易盾验证码 - 原生 JS demo</h2>
+        <h3>易盾验证码 - 原生 JS demo</h3>
         <form class="form" action="">
           <div class="input-block">
             <label for="account" class="input-label">账号：</label>
@@ -48,12 +48,17 @@
 
         initNECaptchaWithFallback({
           element: '#captcha',
-          captchaId: '这里填入你申请到的 captchaId',
+          captchaId: '1274a03943d34e1f93a9f2c363c0a2b7',
           width: '320px',
           mode: 'popup',
           apiVersion: 2,
+          popupStyles: {
+            position: 'fixed',
+            top: '20%'
+          },
           onVerify: function (err, data) {
             if (err) return // 当验证失败时，内部会自动refresh方法，无需手动再调用一次
+            
             // 若成功拿到 validate，传递给 登录 方法
             submit(data.validate)
           }
