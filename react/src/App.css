@@ -1,0 +1,13 @@
+.App .login-form {
+  width: 400px;
+  margin: 20px auto;
+}
+
+.App .form {
+  border: 1px solid #d9d9d9;
+  padding: 15px;
+}
+
+.App #show-info {
+  margin-top: 20px;
+}
