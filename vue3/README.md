@@ -55,6 +55,8 @@ declare function initNECaptchaWithFallback(param1: any, param2: any, param3: any
 
 因为此 demo 是本地服务直接引用项目目录下的 `yidun-captcha.js`，在你打生产环境的包时，需要将该静态 js 文件复制到与 `index.html` 同一目录，vite（或者 webpack） 有相关插件支持，或者你也可以将该文件放到你们的静态资源服务器，通过地址引入。
 
+> 在本 demo 种，将 `yidun-captcha.js` 放到了 `public` 目录下，vite 会自动将其打包到 `dist` 目录中，或者可以试试 `rollup-plugin-copy`。
+
 ## 更多
 
 我们验证码本身支持更多使用姿势，包括非常灵活的 UI 自定义，详情可以向技术支持咨询噢~ 

@@ -41,8 +41,8 @@ import { ref, reactive, onMounted } from 'vue'
 import type { FormInstance } from 'ant-design-vue'
 
 interface FormState {
-  account: string,
-  password: string,
+  account?: string,
+  password?: string,
 }
 
 const formState = reactive<FormState>({
@@ -77,15 +77,15 @@ const initNECaptcha = () => {
       position: 'fixed',
       top: '20%'
     },
-    onVerify: function (err, data) {
+    onVerify: function (err: any, data: { validate: string }) {
       if (err) return // 当验证失败时，内部会自动refresh方法，无需手动再调用一次
       
       // 若成功拿到 validate，可向后端发送请求
       ajax2Server(data.validate)
     }
-  }, function onload(instance) {
+  }, function onload(instance: any) {
     captchaIns.value = instance
-  }, function onerror(err) {
+  }, function onerror(err: any) {
     console.warn(err)
   })
 }
