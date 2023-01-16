@@ -45,6 +45,7 @@
       (function () {
         var captchaIns;
         var validate;
+        var isInitFallback = false;
 
         initNECaptchaWithFallback({
           element: '#captcha',
@@ -52,13 +53,22 @@
           width: '320px',
           mode: 'popup',
           apiVersion: 2,
+          errorFallbackCount: 1,
           popupStyles: {
             position: 'fixed',
             top: '20%'
           },
           onVerify: function (err, data) {
             if (err) return // 当验证失败时，内部会自动refresh方法，无需手动再调用一次
-            
+
+            console.log('Come from fallback script: ', data.isInitFallback, data.validate)
+
+            if (data.isInitFallback) {
+              isInitFallback = data.isInitFallback
+              validate = data.validate
+              return
+            }
+
             // 若成功拿到 validate，传递给 登录 方法
             submit(data.validate)
           }
@@ -91,7 +101,11 @@
           //   console.log('表单校验失败')
           //   return
           // }
-          captchaIns && captchaIns.verify()
+          if (isInitFallback) {
+            submit(validate)
+          } else {
+            captchaIns && captchaIns.verify()
+          }
         })
       })();
     </script>

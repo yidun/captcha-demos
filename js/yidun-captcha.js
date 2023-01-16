@@ -151,7 +151,7 @@
   }
 
   function getTimestamp (msec) {
-    msec = !msec && msec !== 0 ? msec : 1
+    msec = msec && msec !== 0 ? msec : 1
     return parseInt((new Date()).valueOf() / msec, 10)
   }
 
@@ -214,7 +214,7 @@
 
   /*
    * entry: initNECaptchaWithFallback
-   * options: 
+   * options:
    *  errorFallbackCount: 触发降级的错误次数，默认第三次错误降级
    *  defaultFallback: 是否开启默认降级
    *  onFallback: 自定义降级方案，参数为默认validate
@@ -230,7 +230,7 @@
       errorCallbackCount = parseInt(localStorage.getItem(storeKey) || 0, 10)
     } catch (error) {}
 
-    var fallbackFn = !defaultFallback ? config.onFallback || function () {} : function (validate) {
+    var fallbackFn = !defaultFallback ? config.onFallback || function () {} : function (validate, ext = {}) {
       function setFallbackTip (instance) {
         if (!instance) return
         setFallbackTip(instance._captchaIns)
@@ -247,11 +247,11 @@
       }
       setFallbackTip(captchaIns)
 
-      config.onVerify && config.onVerify(null, { validate: validate })
+      config.onVerify && config.onVerify(null, { validate: validate, isFallback: true, isInitFallback: ext.isInitFallback })
     }
     var noFallback = !defaultFallback && !config.onFallback
 
-    var proxyOnError = function (error) {
+    var proxyOnError = function (error, ext = {}) {
       errorCallbackCount++
       if (errorCallbackCount < config.errorFallbackCount) {
         try {
@@ -260,7 +260,7 @@
 
         onerror(error)
       } else {
-        fallbackFn(DEFAULT_VALIDATE)
+        fallbackFn(DEFAULT_VALIDATE, { isInitFallback: ext.isInitFallback })
         proxyRefresh()
         noFallback && onerror(error)
       }
@@ -273,13 +273,13 @@
       } catch (err) {}
     }
 
-    var triggerInitError = function (error) {
+    var triggerInitError = function (error, info = {}) {
       if (initialTimer && initialTimer.isError()) {
         initialTimer.resetError()
         return
       }
       initialTimer && initialTimer.resetTimer()
-      noFallback ? onerror(error) : proxyOnError(error)
+      noFallback ? onerror(error) : proxyOnError(error, { isInitFallback: !!info.isInit })
     }
 
     config.onError = function (error) {
@@ -303,7 +303,7 @@
         initialTimer && initialTimer.resetTimer()
         captchaIns = instance
         onload && onload(instance)
-      }, triggerInitError)
+      }, (err) => triggerInitError(err, { isInit: true }))
     }
     var cacheId = 'load-queue'
     if (!RESOURCE_CACHE[cacheId]) {
@@ -339,7 +339,7 @@
     }
     if (RESOURCE_CACHE[cacheId].status === 'pending') {
       RESOURCE_CACHE[cacheId].rejects.push(function loadReject (err) {
-        triggerInitError(err)
+        triggerInitError(err, { isInit: true })
       })
       RESOURCE_CACHE[cacheId].resolves.push(loadResolve)
     }
