@@ -1,0 +1,26 @@
+.App {
+  width: 420px;
+  margin: 20px auto;
+}
+
+.app-title {
+  margin: 0 0 16px;
+  font-weight: 600;
+  font-size: 20px;
+}
+
+#show-info {
+  margin-top: 20px;
+}
+
+.captcha-service_disabled {
+  color: rgb(78,89,105);
+}
+
+.conventional .float{
+  padding-top: 60px;
+}
+
+.intelligent .float{
+  padding-top: 50px;
+}

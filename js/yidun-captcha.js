@@ -194,7 +194,16 @@
 
       return urls
     }
-    var urls = genUrl(config.staticServer || ['cstaticdun.126.net', 'cstaticdun1.126.net', 'cstatic.dun.163yun.com'])
+
+    const defaultStaticServer = config.ipv6 ? [
+      'cstaticdun-v6.126.net',
+      'cstatic-v6.dun.163yun.com'
+    ] : [
+      'cstaticdun.126.net',
+      'cstatic.dun.163yun.com'
+    ]
+
+    var urls = genUrl(config.staticServer || defaultStaticServer)
 
     function step (i) {
       var url = urls[i] + '?v=' + getTimestamp(CACHE_MIN)
@@ -230,7 +239,7 @@
       errorCallbackCount = parseInt(localStorage.getItem(storeKey) || 0, 10)
     } catch (error) {}
 
-    var fallbackFn = !defaultFallback ? config.onFallback || function () {} : function (validate, ext = {}) {
+    var fallbackFn = !defaultFallback ? config.onFallback || function () {} : function (validate) {
       function setFallbackTip (instance) {
         if (!instance) return
         setFallbackTip(instance._captchaIns)
@@ -247,11 +256,11 @@
       }
       setFallbackTip(captchaIns)
 
-      config.onVerify && config.onVerify(null, { validate: validate, isFallback: true, isInitFallback: ext.isInitFallback })
+      config.onVerify && config.onVerify(null, { validate: validate, isFallback: true })
     }
     var noFallback = !defaultFallback && !config.onFallback
 
-    var proxyOnError = function (error, ext = {}) {
+    var proxyOnError = function (error) {
       errorCallbackCount++
       if (errorCallbackCount < config.errorFallbackCount) {
         try {
@@ -260,7 +269,8 @@
 
         onerror(error)
       } else {
-        fallbackFn(DEFAULT_VALIDATE, { isInitFallback: ext.isInitFallback })
+        
+        fallbackFn(DEFAULT_VALIDATE)
         proxyRefresh()
         noFallback && onerror(error)
       }
@@ -273,15 +283,16 @@
       } catch (err) {}
     }
 
-    var triggerInitError = function (error, info = {}) {
+    var triggerInitError = function (error) {
       if (initialTimer && initialTimer.isError()) {
         initialTimer.resetError()
         return
       }
       initialTimer && initialTimer.resetTimer()
-      noFallback ? onerror(error) : proxyOnError(error, { isInitFallback: !!info.isInit })
+      noFallback ? onerror(error) : proxyOnError(error)
     }
 
+    // get 请求发生错误回调
     config.onError = function (error) {
       if (initialTimer && initialTimer.isError()) {
         initialTimer.resetError()
@@ -303,7 +314,7 @@
         initialTimer && initialTimer.resetTimer()
         captchaIns = instance
         onload && onload(instance)
-      }, (err) => triggerInitError(err, { isInit: true }))
+      }, triggerInitError)
     }
     var cacheId = 'load-queue'
     if (!RESOURCE_CACHE[cacheId]) {
@@ -339,7 +350,7 @@
     }
     if (RESOURCE_CACHE[cacheId].status === 'pending') {
       RESOURCE_CACHE[cacheId].rejects.push(function loadReject (err) {
-        triggerInitError(err, { isInit: true })
+        triggerInitError(err)
       })
       RESOURCE_CACHE[cacheId].resolves.push(loadResolve)
     }

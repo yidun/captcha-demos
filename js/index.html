@@ -10,7 +10,6 @@
   <body>
     <script src="./yidun-captcha.js"></script>
     <div id="app">
-      <div id="captcha"></div>
       <div class="login-form">
         <h3>易盾验证码 - 原生 JS demo</h3>
         <form class="form" action="">
@@ -32,6 +31,7 @@
               placeholder="请输入密码"
             />
           </div>
+          <div id="captcha"></div>
           <div class="input-block">
             <label for="password" class="input-label">&nbsp;</label>
             <div id="login-button">登录</div>
@@ -45,26 +45,27 @@
       (function () {
         var captchaIns;
         var validate;
-        var isInitFallback = false;
+        var isFallback = false;
 
         initNECaptchaWithFallback({
           element: '#captcha',
           captchaId: '这里填入你申请到的 captchaId',
           width: '320px',
-          mode: 'popup',
+          mode: 'embed',
           apiVersion: 2,
           errorFallbackCount: 1,
           popupStyles: {
             position: 'fixed',
             top: '20%'
           },
+          onReady: function () {
+            console.log('ready.....')
+          },
           onVerify: function (err, data) {
             if (err) return // 当验证失败时，内部会自动refresh方法，无需手动再调用一次
 
-            console.log('Come from fallback script: ', data.isInitFallback, data.validate)
-
-            if (data.isInitFallback) {
-              isInitFallback = data.isInitFallback
+            if (data.isFallback) {
+              isFallback = data.isFallback
               validate = data.validate
               return
             }
@@ -101,7 +102,7 @@
           //   console.log('表单校验失败')
           //   return
           // }
-          if (isInitFallback) {
+          if (isFallback) {
             submit(validate)
           } else {
             captchaIns && captchaIns.verify()

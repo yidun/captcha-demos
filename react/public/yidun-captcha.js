@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 (function (global, factory) {
-  'use strict'
   if (typeof module === 'object' && typeof module.exports === 'object') {
     module.exports = global.document ? factory(global) : function (w) {
       if (!w.document) {
@@ -16,7 +15,6 @@
     global.initNECaptchaWithFallback = factory(global)
   }
 }(typeof window !== 'undefined' ? window : this, function (window) {
-  'use strict'
   var errorCallbackCount = 0
 
   // 常量
@@ -151,7 +149,7 @@
   }
 
   function getTimestamp (msec) {
-    msec = !msec && msec !== 0 ? msec : 1
+    msec = msec && msec !== 0 ? msec : 1
     return parseInt((new Date()).valueOf() / msec, 10)
   }
 
@@ -194,7 +192,16 @@
 
       return urls
     }
-    var urls = genUrl(config.staticServer || ['cstaticdun.126.net', 'cstaticdun1.126.net', 'cstatic.dun.163yun.com'])
+
+    const defaultStaticServer = config.ipv6 ? [
+      'cstaticdun-v6.126.net',
+      'cstatic-v6.dun.163yun.com'
+    ] : [
+      'cstaticdun.126.net',
+      'cstatic.dun.163yun.com'
+    ]
+
+    var urls = genUrl(config.staticServer || defaultStaticServer)
 
     function step (i) {
       var url = urls[i] + '?v=' + getTimestamp(CACHE_MIN)
@@ -214,7 +221,7 @@
 
   /*
    * entry: initNECaptchaWithFallback
-   * options: 
+   * options:
    *  errorFallbackCount: 触发降级的错误次数，默认第三次错误降级
    *  defaultFallback: 是否开启默认降级
    *  onFallback: 自定义降级方案，参数为默认validate
@@ -247,7 +254,7 @@
       }
       setFallbackTip(captchaIns)
 
-      config.onVerify && config.onVerify(null, { validate: validate })
+      config.onVerify && config.onVerify(null, { validate: validate, isFallback: true })
     }
     var noFallback = !defaultFallback && !config.onFallback
 
@@ -260,6 +267,7 @@
 
         onerror(error)
       } else {
+        
         fallbackFn(DEFAULT_VALIDATE)
         proxyRefresh()
         noFallback && onerror(error)
@@ -282,6 +290,7 @@
       noFallback ? onerror(error) : proxyOnError(error)
     }
 
+    // get 请求发生错误回调
     config.onError = function (error) {
       if (initialTimer && initialTimer.isError()) {
         initialTimer.resetError()

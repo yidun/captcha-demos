@@ -43,6 +43,14 @@ npm run start
 
 ## 注意点
 
+### ESModule 引入 yidun-captcha.esm.js
+
+如果不想通过 `script` 形式引入 `initNECaptchaWithFallback` ，通过 ESModule 引入，可这样写：
+
+```js
+import initNECaptchaWithFallback from '/path/yidun-captcha.esm.js'
+```
+
 ###  ts 报错 `Cannot find name 'initNECaptchaWithFallback'.ts(2304)`
 
 如果在你的项目中你使用了和本 demo 类似的使用 `initNECaptchaWithFallback` 方式，可能会给你抛出一个错误 `Cannot find name 'initNECaptchaWithFallback`，因为我们是在 html 中引入的 js 脚本，并没有直接引入 `initNECaptchaWithFallback`，且验证码目前没有 ts 类型支持，所以此变量是未定义的，所以我们需要在全局自定义一个 ts 类型，本项目中可在 `types.d.ts` 查看：
